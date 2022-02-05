@@ -1,24 +1,18 @@
 package world;
 
-import enemies.Enemy;
+import engine.Element;
+import entities.Enemy;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
-public class Path {
+public class Path extends Element {
+    ArrayList<Position> positions = new ArrayList<>();
     ArrayList<Direction> directions = new ArrayList<>();
-    ArrayList<Enemy> enemies = new ArrayList<>();
+    ArrayList<HashSet<Enemy>> enemies = new ArrayList<>();
 
     Path() {
 //        Wylosuj kierunki
     }
 
-    public void addEnemy(Enemy enemy) {
-        enemies.add(enemy);
-    }
-
-    public void update() {
-        for (Enemy enemy : enemies) {
-            enemy.move(new Position(0, 0));
-        }
-    }
 }
