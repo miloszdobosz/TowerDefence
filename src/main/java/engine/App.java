@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import world.Map;
 
 public class App extends Application {
     Stage primaryStage = new Stage();
@@ -19,8 +20,7 @@ public class App extends Application {
     }
 
     public Scene createScene() {
-        Element element = new Element();
-        Group group = new Group(new Element().view());
-        return new Scene(group);
+        Map map = new Map();
+        return new Scene(map.view());
     }
 }

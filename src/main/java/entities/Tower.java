@@ -1,9 +1,10 @@
 package entities;
 
 import engine.Element;
+import javafx.scene.Group;
 import world.Map;
 
-public class Tower extends Element {
+public class Tower implements Element {
     int size;
     int price;
     int damage;
@@ -29,4 +30,7 @@ public class Tower extends Element {
     }
 
 
+    @Override
+    public void view(Group parent) {
+    }
 }
