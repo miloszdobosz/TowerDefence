@@ -1,49 +1,78 @@
 package entities;
 
+import engine.App;
 import engine.Element;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import world.Direction;
-import world.Map;
+import world.Path;
+import world.World;
 import world.Position;
 
-public class Enemy implements Element {
+public class Enemy extends Element {
     int damage;
     int health;
     int speed;
     int reward;
 
-    Map map;
-    Position position;
+    int pathSegment = 0;
+    int distanceToNext;
+
+    int progress = 0;
+
+    World world;
+    Path path;
+
+    Rectangle view;
+
     Direction direction;
 
-    Enemy(Map map, Position position) {
-        this.map = map;
-        this.position = position;
+    public Enemy(World world, Path path, int speed, Group parentView) {
+        this.world = world;
+        this.path = path;
+        updateSegment();
+        this.speed = speed;
+        this.health = 100;
+
+        view = new Rectangle(position.x, position.y, 20, 20);
+        view.setFill(Color.rgb(255, 0, 100));
+        parentView.getChildren().add(view);
     }
 
     public void move() {
         position = position.add(direction.toPositionChange(speed));
+        distanceToNext -= speed;
+        progress += speed;
+        if (distanceToNext <= 0) {
+            pathSegment++;
+            updateSegment();
+        }
+
+        view.setX(position.x);
+        view.setX(position.y);
+    }
+
+    private void updateSegment() {
+        position = path.getPosition(pathSegment);
+        direction = path.getDirection(pathSegment);
+        distanceToNext = path.getDistance(pathSegment);
+
+        if (distanceToNext == 0) {
+            world.kill(this);
+        }
     }
 
     public void bleed(int damage) {
         health -= damage;
 
         if (health <= 0) {
-            kill();
+            world.kill(this);
         }
     }
 
-    public void kill() {
-        map.removeEnemy(this);
-    }
-
-    @Override
-    public void view(Group group) {
-        Rectangle view = new Rectangle(position.x, position.y, 50, 50);
-        view.setFill(Color.rgb(100, 200, 0));
-        group.getChildren().add(view);
+    public int getProgress() {
+        return progress;
     }
 }

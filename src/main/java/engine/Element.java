@@ -1,11 +1,13 @@
 package engine;
 
 import javafx.scene.Group;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
+import javafx.scene.Node;
 import world.Position;
 
-public interface Element {
+public abstract class Element {
+    protected Position position;
 
-    public void view(Group parent);
+    public Position getPosition() {
+        return position;
+    }
 }

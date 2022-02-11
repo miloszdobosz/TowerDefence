@@ -3,10 +3,10 @@ package world;
 import java.util.Objects;
 
 public class Position implements Comparable<Position>{
-    public final double x;
-    public final double y;
+    public final int x;
+    public final int y;
 
-    public Position(double x, double y) {
+    public Position(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -35,15 +35,15 @@ public class Position implements Comparable<Position>{
     }
 
     public Position upperRight(Position other) {
-        double x = Math.max(this.x, other.x);
-        double y = Math.max(this.y, other.y);
+        int x = Math.max(this.x, other.x);
+        int y = Math.max(this.y, other.y);
 
         return new Position(x, y);
     }
 
     public Position lowerLeft(Position other) {
-        double x = Math.min(this.x, other.x);
-        double y = Math.min(this.y, other.y);
+        int x = Math.min(this.x, other.x);
+        int y = Math.min(this.y, other.y);
 
         return new Position(x, y);
     }
@@ -54,6 +54,14 @@ public class Position implements Comparable<Position>{
 
     public Position subtract(Position other) {
         return new Position(this.x - other.x, this.y - other.y);
+    }
+
+    public Position times(int scalar) {
+        return new Position(this.x * scalar, this.y * scalar);
+    }
+
+    public int distanceTo(Position other) {
+        return (int) Math.sqrt(Math.pow(other.x - this.x, 2) + Math.pow(other.y - this.y, 2));
     }
 
     @Override
