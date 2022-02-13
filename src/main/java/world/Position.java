@@ -64,8 +64,17 @@ public class Position implements Comparable<Position>{
         return new Position((int) (x / scalar) * scalar, (int) (y / scalar) * scalar);
     }
 
-    public int distanceTo(Position other) {
-        return (int) Math.sqrt(Math.pow(other.x - this.x, 2) + Math.pow(other.y - this.y, 2));
+    public double distanceTo(Position other) {
+        return this.subtract(other).length();
+    }
+
+    public double length() {
+        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    }
+
+    public Position normalize(double scalar) {
+        double length = this.length();
+        return new Position((x * scalar) / length, (y * scalar) / length);
     }
 
     @Override

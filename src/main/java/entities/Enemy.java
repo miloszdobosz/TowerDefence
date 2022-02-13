@@ -1,77 +1,59 @@
 package entities;
 
-import engine.Element;
 import engine.Menu;
-import javafx.application.Platform;
-import javafx.scene.Group;
+import engine.Movable;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import world.Direction;
-import world.Path;
 import world.Position;
-import world.World;
 
-public class Enemy extends Element {
-    int damage;
-    int health;
-    int speed;
-    int reward;
+import java.util.Iterator;
 
-    int pathSegment = 0;
-    int distanceToNext;
+public class Enemy extends Movable {
+    int health, damage, reward;
 
-    int progress = 0;
+    double progress = 0;
 
-    World world;
-    Path path;
+    Iterator<Position> path;
 
     Menu menu;
 
-    Rectangle view;
-    Group parentView;
-
-    Direction direction;
-
-    public Enemy(World world, Path path, int speed, Group parentView, Menu menu) {
-        this.world = world;
+    public Enemy(Iterator<Position> path, int speed, Menu menu) {
         this.path = path;
-        updateSegment();
+        position = path.next();
+        target = path.next();
+
         this.speed = speed;
+        direction = calculateDirection();
+
+
         this.health = 100;
         this.damage = 20;
+        this.reward = 20;
 
-        position = path.getPosition(0);
         size = new Position(20, 20);
-        this.parentView = parentView;
 
         this.menu = menu;
 
         view = new Rectangle(position.x, position.y, size.x, size.y);
         view.setFill(Color.rgb(255, 0, 100));
 
-        Platform.runLater(() -> parentView.getChildren().add(view));
+        addView();
     }
 
     public void update() {
-        position = position.add(direction.toPositionChange(speed));
-        distanceToNext -= speed;
         progress += speed;
-        if (distanceToNext <= 0) {
-            pathSegment++;
-            updateSegment();
-        }
 
-        Platform.runLater(() -> view.relocate(position.x, position.y));
-    }
-
-    private void updateSegment() {
-        position = path.getPosition(pathSegment);
-        direction = path.getDirection(pathSegment);
-        distanceToNext = path.getDistance(pathSegment);
-
-        if (distanceToNext == 0) {
-            world.getMenu().bleed(damage);
-            kill();
+        if (!move()) {
+            if (path.hasNext()) {
+                position = target;
+                target = path.next();
+                direction = calculateDirection();
+            }
+            else {
+                menu.bleed(damage);
+                kill();
+                return;
+            }
         }
     }
 
@@ -84,11 +66,12 @@ public class Enemy extends Element {
     }
 
     private void kill() {
-        world.kill(this);
-        Platform.runLater(() -> parentView.getChildren().remove(view));
+        menu.pay(-reward);
+        delete();
     }
 
-    public int getProgress() {
+    public double getProgress() {
         return progress;
     }
+
 }

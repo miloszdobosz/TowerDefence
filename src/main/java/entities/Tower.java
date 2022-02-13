@@ -1,8 +1,6 @@
 package entities;
 
 import engine.Element;
-import javafx.application.Platform;
-import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import world.Position;
@@ -19,28 +17,20 @@ public class Tower extends Element {
 
     World world;
 
-    ArrayList<Bullet> bullets = new ArrayList<>();
+    Entities<Bullet> bullets = new Entities<>(new ArrayList<>());
 
-    Rectangle view;
-    Group parentView;
-
-    public Tower(World world, Position position, Group parentView) {
+    public Tower(World world, Position position) {
         this.world = world;
         this.position = position;
-        this.range = 1000;
-        this.damage = 10;
+        this.range = 200;
+        this.damage = 15;
         this.period = 500;
+        this.price = 100;
 
         this.size = new Position(50, 50);
 
-        this.parentView = parentView;
-
-//        System.out.println(getCornerPosition());
-
         view = new Rectangle(position.x, position.y, getSize().x, getSize().y);
         view.setFill(Color.rgb(0, 100, 255));
-
-        Platform.runLater(() -> parentView.getChildren().add(view));
 
         Thread thread = new Thread(() -> {
             while (true) {
@@ -55,21 +45,27 @@ public class Tower extends Element {
             }
         });
         thread.start();
+
+        addView();
     }
 
     public void attack() {
         Optional<Enemy> enemy = world.getTarget(this);
         if (enemy.isPresent()) {
-            bullets.add(new Bullet(getCenter(), enemy.get().getCenter(), parentView));
+            bullets.add(new Bullet(getCenter(), enemy.get().getCenter()));
             enemy.get().bleed(damage);
         }
     }
 
     public void update() {
-        bullets.forEach(bullet -> bullet.update());
+        bullets.update();
     }
 
     public boolean inRange(Enemy enemy) {
         return position.distanceTo(enemy.getPosition()) <= range;
+    }
+
+    public int getPrice() {
+        return price;
     }
 }

@@ -1,44 +1,27 @@
 package entities;
 
-import engine.Element;
-import javafx.application.Platform;
-import javafx.scene.Group;
+import engine.Movable;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import world.Position;
 
-public class Bullet extends Element {
-    Position source, target;
+public class Bullet extends Movable {
 
-    double progress = 0;
-    int period = 50;
-
-    Circle view;
-    Group parentView;
-
-    public Bullet(Position source, Position target, Group parentView) {
-        this.source = source;
+    public Bullet(Position source, Position target) {
+        this.position = source;
         this.target = target;
+        this.speed = 30;
+        this.direction = calculateDirection();
 
         view = new Circle(source.x, source.y, 4);
         view.setFill( Color.rgb(100, 100, 100));
 
-        this.parentView = parentView;
-
-        Platform.runLater(() -> parentView.getChildren().add(view));
+        addView();
     }
 
     public void update() {
-        if (progress >= 1) {
-            Platform.runLater(() -> parentView.getChildren().remove(view));
-            return;
+        if (!move()) {
+            delete();
         }
-        progress += 0.05;
-        Position position = target.times(progress).add(source.times(1 - progress));
-//        System.out.println(position);
-
-//        Position position = source.add(new Position(progress, progress));
-
-        Platform.runLater(() -> view.relocate(position.x, position.y));
     }
 }
