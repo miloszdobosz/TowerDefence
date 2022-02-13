@@ -12,13 +12,10 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class Tower extends Element {
-    int size;
     int price;
     int damage;
     int range;
     int period;
-
-    Position position;
 
     World world;
 
@@ -30,15 +27,20 @@ public class Tower extends Element {
     public Tower(World world, Position position, Group parentView) {
         this.world = world;
         this.position = position;
-        this.range = 100;
+        this.range = 1000;
         this.damage = 10;
-        this.period = 50;
+        this.period = 500;
+
+        this.size = new Position(50, 50);
 
         this.parentView = parentView;
 
-        view = new Rectangle(position.x, position.y, 50, 50);
+//        System.out.println(getCornerPosition());
+
+        view = new Rectangle(position.x, position.y, getSize().x, getSize().y);
         view.setFill(Color.rgb(0, 100, 255));
-        parentView.getChildren().add(view);
+
+        Platform.runLater(() -> parentView.getChildren().add(view));
 
         Thread thread = new Thread(() -> {
             while (true) {
@@ -51,7 +53,6 @@ public class Tower extends Element {
                     attack();
                 }
             }
-
         });
         thread.start();
     }
@@ -59,19 +60,16 @@ public class Tower extends Element {
     public void attack() {
         Optional<Enemy> enemy = world.getTarget(this);
         if (enemy.isPresent()) {
-            bullets.add(new Bullet(position, enemy.get().getPosition(), parentView));
+            bullets.add(new Bullet(getCenter(), enemy.get().getCenter(), parentView));
             enemy.get().bleed(damage);
         }
+    }
+
+    public void update() {
+        bullets.forEach(bullet -> bullet.update());
     }
 
     public boolean inRange(Enemy enemy) {
         return position.distanceTo(enemy.getPosition()) <= range;
     }
-
-
-//    @Override
-//    public void view(Group parent) {
-//        parent.getChildren().add(view);
-//        bullets.forEach(bullet -> bullet.view(parent));
-//    }
 }

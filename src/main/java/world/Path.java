@@ -2,6 +2,7 @@ package world;
 
 import engine.Element;
 import entities.Enemy;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
@@ -36,7 +37,9 @@ public class Path{
 
 //        positions.forEach((p1, p2) -> parentView.getChildren().add(new Line(p1.x, p1.y, p2.x, p2.y)));
         for (int i = 0; i < positions.size() - 1; i++) {
-            parentView.getChildren().add(new Line(positions.get(i).x, positions.get(i).y, positions.get(i + 1).x, positions.get(i + 1).y));
+            Position p1 = positions.get(i);
+            Position p2 = positions.get(i + 1);
+            Platform.runLater(() -> parentView.getChildren().add(new Line(p1.x, p1.y, p2.x, p2.y)));
         }
     }
 

@@ -1,15 +1,15 @@
 package entities;
 
-import engine.App;
 import engine.Element;
+import engine.Menu;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import world.Direction;
 import world.Path;
-import world.World;
 import world.Position;
+import world.World;
 
 public class Enemy extends Element {
     int damage;
@@ -25,23 +25,34 @@ public class Enemy extends Element {
     World world;
     Path path;
 
+    Menu menu;
+
     Rectangle view;
+    Group parentView;
 
     Direction direction;
 
-    public Enemy(World world, Path path, int speed, Group parentView) {
+    public Enemy(World world, Path path, int speed, Group parentView, Menu menu) {
         this.world = world;
         this.path = path;
         updateSegment();
         this.speed = speed;
         this.health = 100;
+        this.damage = 20;
 
-        view = new Rectangle(position.x, position.y, 20, 20);
+        position = path.getPosition(0);
+        size = new Position(20, 20);
+        this.parentView = parentView;
+
+        this.menu = menu;
+
+        view = new Rectangle(position.x, position.y, size.x, size.y);
         view.setFill(Color.rgb(255, 0, 100));
-        parentView.getChildren().add(view);
+
+        Platform.runLater(() -> parentView.getChildren().add(view));
     }
 
-    public void move() {
+    public void update() {
         position = position.add(direction.toPositionChange(speed));
         distanceToNext -= speed;
         progress += speed;
@@ -50,8 +61,7 @@ public class Enemy extends Element {
             updateSegment();
         }
 
-        view.setX(position.x);
-        view.setX(position.y);
+        Platform.runLater(() -> view.relocate(position.x, position.y));
     }
 
     private void updateSegment() {
@@ -60,7 +70,8 @@ public class Enemy extends Element {
         distanceToNext = path.getDistance(pathSegment);
 
         if (distanceToNext == 0) {
-            world.kill(this);
+            world.getMenu().bleed(damage);
+            kill();
         }
     }
 
@@ -68,8 +79,13 @@ public class Enemy extends Element {
         health -= damage;
 
         if (health <= 0) {
-            world.kill(this);
+            kill();
         }
+    }
+
+    private void kill() {
+        world.kill(this);
+        Platform.runLater(() -> parentView.getChildren().remove(view));
     }
 
     public int getProgress() {
