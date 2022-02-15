@@ -34,20 +34,6 @@ public class Position implements Comparable<Position>{
         return this.x >= other.x && this.y >= other.y;
     }
 
-    public Position upperRight(Position other) {
-        double x = Math.max(this.x, other.x);
-        double y = Math.max(this.y, other.y);
-
-        return new Position(x, y);
-    }
-
-    public Position lowerLeft(Position other) {
-        double x = Math.min(this.x, other.x);
-        double y = Math.min(this.y, other.y);
-
-        return new Position(x, y);
-    }
-
     public Position add(Position other) {
         return new Position(this.x + other.x, this.y + other.y);
     }
@@ -64,6 +50,11 @@ public class Position implements Comparable<Position>{
         return new Position((int) (x / scalar) * scalar, (int) (y / scalar) * scalar);
     }
 
+    public Position normalize(double scalar) {
+        double length = this.length();
+        return new Position((x * scalar) / length, (y * scalar) / length);
+    }
+
     public double distanceTo(Position other) {
         return this.subtract(other).length();
     }
@@ -72,10 +63,6 @@ public class Position implements Comparable<Position>{
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 
-    public Position normalize(double scalar) {
-        double length = this.length();
-        return new Position((x * scalar) / length, (y * scalar) / length);
-    }
 
     @Override
     public int hashCode() {

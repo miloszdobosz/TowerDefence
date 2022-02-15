@@ -1,9 +1,9 @@
-package engine;
+package entities;
 
 import javafx.application.Platform;
 import world.Position;
 
-public abstract class Movable extends Element {
+public abstract class Movable extends Entity {
     protected double speed;
 
     protected Position target;

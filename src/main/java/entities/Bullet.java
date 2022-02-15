@@ -1,26 +1,30 @@
 package entities;
 
-import engine.Movable;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import world.Position;
 
 public class Bullet extends Movable {
+    Enemy enemy;
 
-    public Bullet(Position source, Position target) {
-        this.position = source;
-        this.target = target;
+    int damage;
+
+    public Bullet(Tower tower, Enemy enemy, int damage) {
+        this.position = tower.getCenter();
+        this.target = enemy.getCenter();
         this.speed = 30;
         this.direction = calculateDirection();
 
-        view = new Circle(source.x, source.y, 4);
-        view.setFill( Color.rgb(100, 100, 100));
+        this.enemy = enemy;
 
+        this.damage = damage;
+
+        view = new Circle(position.x, position.y, 5, Color.rgb(150, 0, 0));
         addView();
     }
 
     public void update() {
         if (!move()) {
+            enemy.bleed(damage);
             delete();
         }
     }

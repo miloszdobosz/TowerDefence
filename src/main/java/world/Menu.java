@@ -1,18 +1,15 @@
-package engine;
+package world;
 
+import engine.App;
+import entities.Entity;
 import entities.Tower;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import world.Position;
-import world.World;
 
-public class Menu extends Element {
-
+public class Menu extends Entity {
     public static final Image[] views = {
             new Image("menu/money.png", 20, 0, true, true),
             new Image("menu/health.png", 20, 0, true, true)
@@ -21,12 +18,6 @@ public class Menu extends Element {
             new Position(World.worldSize.x + 25, 25),
             new Position(World.worldSize.x + 25, 50)
     };
-    public static int menuSize = 200;
-
-//    public static ArrayList<Position> towerPositions = new ArrayList<>();
-//    public static ArrayList<Position> towerSizes = new ArrayList<>();
-//    public static ArrayList<Integer> prices = new ArrayList<>();
-//    public static ArrayList<Integer> ranges = new ArrayList<>();
 
     public static final Position[] towerPositions = {
             new Position(World.worldSize.x + 25, 100),
@@ -35,37 +26,22 @@ public class Menu extends Element {
             new Position(World.worldSize.x + 25, 500)
     };
 
-    int health = 100;
-    int money = 500;
+    public static final int menuSize = 200;
+
 
     Text moneyText;
     Text healthText;
 
+    int health = 100;
+    int money = 500;
+
     public boolean alive = true;
 
+
     public Menu(World world) {
-//        towerPositions.add(new Position(World.worldSize.x + 25, 100));
-//        towerPositions.add(new Position(World.worldSize.x + 125, 100));
-//        towerPositions.add(new Position(World.worldSize.x + 25, 200));
-//        towerPositions.add(new Position(World.worldSize.x + 25, 300));
-//
-//        towerSizes.add(new Position(World.fieldSize, World.fieldSize));
-//        towerSizes.add(new Position(World.fieldSize, World.fieldSize));
-//        towerSizes.add(new Position(World.fieldSize, World.fieldSize * 3));
-//        towerSizes.add(new Position(World.fieldSize * 2, World.fieldSize * 2));
-//
-//        prices.add(100);
-//        prices.add(200);
-//        prices.add(200);
-//        prices.add(400);
-//
-//        ranges.add(100);
-//        ranges.add(100);
-//        ranges.add(300);
-//        ranges.add(200);
 
         Rectangle rectangle = new Rectangle(World.worldSize.x, 0, menuSize, World.worldSize.y);
-        rectangle.setFill(Color.rgb(100,100,100));
+        rectangle.setFill(Color.rgb(150,100,100));
         view = rectangle;
 
         moneyText = new Text(World.worldSize.x + 50, 40, String.valueOf(money));
@@ -86,6 +62,13 @@ public class Menu extends Element {
             ImageView view = new ImageView(Tower.views[i]);
             view.relocate(towerPositions[i].x, towerPositions[i].y);
 
+            ImageView priceView = new ImageView(views[0]);
+            priceView.relocate(towerPositions[i].x, towerPositions[i].y + Tower.sizes[i].y + 10);
+
+
+            Text priceText = new Text(towerPositions[i].x + 25, towerPositions[i].y + Tower.sizes[i].y + 25, String.valueOf(Tower.prices[i]));
+            priceText.setFill(Color.rgb(255, 180, 0));
+
             int finalI = i;
             view.setOnMousePressed(event -> {
                 if (canAfford(finalI)) {
@@ -93,11 +76,8 @@ public class Menu extends Element {
                 }
             });
 
-            App.parentView.getChildren().add(view);
+            App.parentView.getChildren().addAll(view, priceView, priceText);
         }
-    }
-
-    private void addOptions() {
     }
 
     private boolean canAfford(int i) {
@@ -120,13 +100,6 @@ public class Menu extends Element {
 
     public void kill() {
         this.alive = false;
-
-        System.out.println("GAME OVER!");
-
-        Platform.runLater(() -> {
-            Alert a = new Alert(Alert.AlertType.NONE);
-            a.setContentText("GAME OVER!");
-            a.show();
-        });
+        App.lose();
     }
 }

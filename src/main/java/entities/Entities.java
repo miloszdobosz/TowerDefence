@@ -1,12 +1,10 @@
 package entities;
 
-import engine.Element;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-public class Entities<E extends Element> {
+public class Entities<E extends Entity> {
     public Collection<E> collection;
     protected ArrayList<E> toAdd = new ArrayList<>();
     protected ArrayList<E> toRemove = new ArrayList<>();

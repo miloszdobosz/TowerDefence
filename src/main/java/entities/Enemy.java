@@ -1,14 +1,14 @@
 package entities;
 
-import engine.Menu;
-import engine.Movable;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import world.Menu;
+import javafx.scene.image.Image;
 import world.Position;
 
 import java.util.Iterator;
 
 public class Enemy extends Movable {
+    public static Image[] views = new Image[103];
+
     int health, damage, reward;
 
     double progress = 0;
@@ -17,25 +17,24 @@ public class Enemy extends Movable {
 
     Menu menu;
 
-    public Enemy(Iterator<Position> path, int speed, Menu menu) {
+    public Enemy(Iterator<Position> path, double speed, Menu menu) {
         this.path = path;
         position = path.next();
         target = path.next();
 
         this.speed = speed;
-        direction = calculateDirection();
-
 
         this.health = 100;
-        this.damage = 20;
+        this.damage = 10;
         this.reward = 20;
+
+        direction = calculateDirection();
 
         size = new Position(20, 20);
 
         this.menu = menu;
 
-        view = new Rectangle(position.x, position.y, size.x, size.y);
-        view.setFill(Color.rgb(255, 0, 100));
+        setView(views[(int) (Math.random() * views.length)]);
 
         addView();
     }
@@ -74,4 +73,9 @@ public class Enemy extends Movable {
         return progress;
     }
 
+    public static void loadViews() {
+        for (int i = 1; i < 103; i++) {
+            views[i] = new Image("enemies/" + i + ".png");
+        }
+    }
 }

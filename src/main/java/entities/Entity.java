@@ -1,13 +1,13 @@
-package engine;
+package entities;
 
-import entities.Entities;
+import engine.App;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import world.Position;
 
-public abstract class Element {
+public abstract class Entity {
     protected Position position;
     protected Position size;
 
@@ -18,7 +18,7 @@ public abstract class Element {
     public Position getPosition() {
         return position;
     }
-    public Position getSize() {return size;}
+
     public Position getCenter() {
         return position.add(size.times(0.5));
     }
@@ -35,10 +35,6 @@ public abstract class Element {
     public void setView(Image image) {
         view = new ImageView(image);
         Platform.runLater(() -> view.relocate(position.x, position.y));
-    }
-
-    public Node getView() {
-        return view;
     }
 
     public void addView() {
